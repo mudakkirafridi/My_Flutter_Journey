@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_full_course/widgets/message-cont.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class MessagesScreen extends StatefulWidget {
+  const MessagesScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _MyWidgetState();
+  State<MessagesScreen> createState() => _MyWidgetState();
 }
 
-class _MyWidgetState extends State<HomeScreen> {
+class _MyWidgetState extends State<MessagesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
