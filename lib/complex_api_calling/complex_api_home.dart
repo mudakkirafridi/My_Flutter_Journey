@@ -21,8 +21,8 @@ class _BooksApisState extends State<BooksApis> {
 
   _getBook() async {
     try {
-      var response = await http
-          .get(Uri.parse('https://www.googleapis.com/books/v1/volumes?q=mind'));
+      var response = await http.get(Uri.parse(
+          'https://www.googleapis.com/books/v1/volumes?q=search+terms'));
       var decodedJson =
           jsonDecode(response.body.toString()) as Map<String, dynamic>;
       setState(() {
@@ -44,8 +44,18 @@ class _BooksApisState extends State<BooksApis> {
             itemCount: booksResponse?.items?.length ?? 0,
             itemBuilder: (context, index) {
               return ListTile(
+                leading: Image.network(
+                  booksResponse
+                          ?.items![index].volumeInfo?.imageLinks?.thumbnail ??
+                      '',
+                  scale: 1.0,
+                ),
                 title:
                     Text(booksResponse?.items![index].volumeInfo?.title ?? ''),
+                subtitle: Text(
+                  booksResponse?.items![index].volumeInfo?.title ?? '',
+                  style: const TextStyle(fontSize: 11),
+                ),
               );
             }));
   }
