@@ -13,16 +13,14 @@ class BooksApis extends StatefulWidget {
 
 class _BooksApisState extends State<BooksApis> {
   BooksResponse? booksResponse;
-  @override
-  void initState() {
-    super.initState();
-    _getBook();
-  }
+  bool isLoading = false;
+  final myController = TextEditingController();
+  String get keyword => myController.text;
 
-  _getBook() async {
+  getBook() async {
     try {
-      var response = await http.get(Uri.parse(
-          'https://www.googleapis.com/books/v1/volumes?q=search+terms'));
+      var response = await http.get(
+          Uri.parse('https://www.googleapis.com/books/v1/volumes?q=$keyword'));
       var decodedJson =
           jsonDecode(response.body.toString()) as Map<String, dynamic>;
       setState(() {
@@ -38,25 +36,67 @@ class _BooksApisState extends State<BooksApis> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.blue,
-          title: const Text('Google Book Api'),
+          centerTitle: true,
+          title: const Text(
+            'Mudakir Book Store',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
-        body: ListView.builder(
-            itemCount: booksResponse?.items?.length ?? 0,
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: Image.network(
-                  booksResponse
-                          ?.items![index].volumeInfo?.imageLinks?.thumbnail ??
-                      '',
-                  scale: 1.0,
+        body: Column(
+          children: [
+            const SizedBox(
+              height: 7,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(),
+                        borderRadius: BorderRadius.circular(15)),
+                    child: TextFormField(
+                      decoration:
+                          const InputDecoration(border: InputBorder.none),
+                      controller: myController,
+                    ),
+                  ),
                 ),
-                title:
-                    Text(booksResponse?.items![index].volumeInfo?.title ?? ''),
-                subtitle: Text(
-                  booksResponse?.items![index].volumeInfo?.title ?? '',
-                  style: const TextStyle(fontSize: 11),
-                ),
-              );
-            }));
+                InkWell(
+                    onTap: () {
+                      getBook();
+                    },
+                    child: const Icon(
+                      Icons.search,
+                      size: 35,
+                    ))
+              ],
+            ),
+            if (!isLoading)
+              Expanded(
+                child: ListView.builder(
+                    itemCount: booksResponse?.items?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: Image.network(
+                          booksResponse?.items![index].volumeInfo?.imageLinks
+                                  ?.thumbnail ??
+                              '',
+                        ),
+                        title: Text(
+                            booksResponse?.items![index].volumeInfo?.title ??
+                                ''),
+                        subtitle: Text(
+                          booksResponse?.items![index].volumeInfo?.title ?? '',
+                          style: const TextStyle(fontSize: 11),
+                        ),
+                      );
+                    }),
+              ),
+            if (isLoading)
+              const Center(
+                child: CircularProgressIndicator(),
+              )
+          ],
+        ));
   }
 }
